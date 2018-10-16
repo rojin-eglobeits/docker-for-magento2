@@ -1,0 +1,97 @@
+version: "3"
+services:
+    web:
+        build: ./nginx
+        ports:
+            - "80:80"
+            - "443:443"
+        networks:
+            front:
+              ipv4_address: 172.15.0.2
+            back:
+              ipv4_address: 172.25.0.2
+        volumes: 
+          - .:/var/www/html:ro
+          - ./etc/config/nginx/sites-enabled/default.conf:/etc/nginx/sites-enabled/default.conf
+          - ./etc/config/nginx/nginx.conf:/etc/nginx/nginx.conf
+          - ./etc/config/nginx/ssl:/etc/nginx/ssl
+          - ./etc/config/nginx/auth:/etc/nginx/auth
+          - ./etc/config/appdata/startup.sh:/startup.sh
+        
+        depends_on:
+            - php
+            - db
+            - redis
+            - cache
+
+    php:
+        build: ./php
+        networks:
+            back:
+                ipv4_address: 172.25.0.3
+        volumes: 
+            - .:/var/www/html:rw
+            - ./php/php.ini:/usr/local/etc/php/php.ini
+            - ./etc/config/php/php-fpm.conf:/usr/local/etc/php-fpm.conf
+            - ./etc/config/php/ext-xdebug.ini:/usr/local/etc/php/conf.d/ext-xdebug.ini
+            - ./etc/config/appdata/startup.sh:/startup.sh
+        
+        env_file: ./etc/config/php.env
+        user: www-data
+        expose:
+            - 9000
+            - 9009
+        depends_on:
+            - db
+    db:
+        image: percona:5.7
+        env_file: ./etc/config/db.env
+        volumes:
+            - magento2mysqldata:/var/lib/mysql
+        networks:
+            back:
+                ipv4_address: 172.25.0.4
+        ports:
+            - 3306:3306
+    phpmyadmin:
+        image: phpmyadmin/phpmyadmin
+        networks:
+            back:
+                ipv4_address: 172.25.0.5
+        ports:
+            - 8181:80
+        env_file: ./etc/config/db.env
+        environment:
+            PMA_HOST: db
+            PMA_PORT: 3306
+        depends_on:
+            - db
+    redis:
+        image: redis
+        ports:
+            - 6379:6379
+        networks:
+            back:
+                ipv4_address: 172.25.0.6
+        depends_on:
+            - db
+    cache:
+        build: ./varnish
+        networks:
+            front:
+                ipv4_address: 172.15.0.3
+volumes:
+    magento2mysqldata:
+      driver: local
+
+networks:
+  front:
+    driver: bridge
+    ipam:
+      config:
+      - subnet: 172.15.0.0/24
+  back:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.25.0.0/24

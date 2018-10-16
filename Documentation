@@ -1,0 +1,32 @@
+Magnento 2 Docker With Nginx,Php,Percona Db,redis,varnish,phpmyadmin,cron,rabitmq and XDebug Option,
+
+Two Mode.
+
+## 1. Production Mode
+
+Nginx, Php, Percona Db, Redis, Varnish , Cron, RabitMQ, 
+
+## 2. Developer Mode
+Nginx, Php, Percona Db, Redis, Phpmyadmin, Xdebug 
+
+Use docker-compose.yml for developer mode and docker-compose-prod.yml along with docker-compose.yml for production mode.
+
+
+disable xdebug when performing composer action
+
+install sample data based on configuration
+
+
+Our First Extension is
+
+Mangento 2 Configurable bundle
+
+
+
+able to install extension in one step from repo.magento
+
+install fresh project with sample data for developement purpose only need to give repo url
+
+varnish used only in production mode need to pass -l option to init_project for first time
+#parent Directory
+code_dir=$(dirname  "$project_dir");

@@ -1,0 +1,57 @@
+version: "3"
+services:
+    
+    php:
+        environment:
+            PHP_XEDUBG_ENABLED: 0
+    db:
+        image: percona:5.7
+        env_file: *environment
+        environment:
+            MYSQL_ROOT_PASSWORD: ${DATABASE_ROOT_PASSWORD}
+            MYSQL_DATABASE: ${DATABASE_NAME}
+            MYSQL_USER: ${DATABASE_USER}
+            MYSQL_PASSWORD: ${DATABASE_PASSWORD}
+        volumes:
+            - magento2mysqldata:/var/lib/mysql
+        networks:
+            back:
+                ipv4_address: 172.25.0.4
+        ports:
+            - 3306:3306
+    phpmyadmin:
+        image: phpmyadmin/phpmyadmin
+        networks:
+            back:
+                ipv4_address: 172.25.0.5
+        ports:
+            - 8181:80
+        environment:
+            MYSQL_USERNAME: ${DATABASE_USER}
+            MYSQL_ROOT_PASSWORD: ${DATABASE_ROOT_PASSWORD}
+            MYSQL_PASSWORD: ${DATABASE_PASSWORD}
+            PMA_HOST: db
+            PMA_PORT: 3306
+        depends_on:
+            - db
+    
+    cache:
+        build: ./varnish
+        networks:
+            front:
+                ipv4_address: 172.15.0.3
+volumes:
+    magento2mysqldata:
+      driver: local
+
+networks:
+  front:
+    driver: bridge
+    ipam:
+      config:
+      - subnet: 172.15.0.0/24
+  back:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.25.0.0/24
