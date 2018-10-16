@@ -1,4 +1,4 @@
-# Vagrant project for Magento 2 developers (optimized for Mac, Windows and \*nix hosts)
+# Docker project for Magento 2 developers (optimized for Mac, Windows and \*nix hosts)
 
 [![Tests passing on OSX](docs/images/tests_badge.png)](https://github.com/paliarush/magento2-vagrant-for-developers-tests)
 [![MIT License](https://img.shields.io/badge/license-MIT-blue.svg)](./LICENSE)
