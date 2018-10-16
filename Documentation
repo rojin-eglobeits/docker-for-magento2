@@ -30,3 +30,23 @@ install fresh project with sample data for developement purpose only need to giv
 varnish used only in production mode need to pass -l option to init_project for first time
 #parent Directory
 code_dir=$(dirname  "$project_dir");
+
+#if example
+if [[ ( "$val" -ge "36000" ) && ( "$val" -le "42000" ) ]] || [[ ( "$val" -ge "60000" ) && ( "$val" -le "66000" ) ]]
+
+check if docker installed or not ?
+check if port are available
+check if code base exist
+pull code base
+pull sample data
+docker up with specific file depends on production or developer.
+use the php version from config file
+mv to the host command file to bin dir and set permission
+
+
+docker import database file to db container change base_url to config value host.
+docker-composer up-d
+docker exec magento commands
+docker exec redis commands
+docker exec mysql
+docker exec
